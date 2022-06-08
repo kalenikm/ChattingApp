@@ -99,6 +99,27 @@ func GetChats() (*[]Chat, error) {
 	return &chats, nil
 }
 
+func GetChatById(chatId string) (*Chat, error) {
+	client, ctx, cancel, err := connectToDb()
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	defer cancel()
+
+	chattingAppDb := client.Database("chattingApp")
+	chatsCollection := chattingAppDb.Collection("chats")
+
+	chatObjectId := stringToObjectId(chatId)
+	var chat *Chat
+	if err = chatsCollection.FindOne(ctx, bson.M{"_id": chatObjectId}).Decode(&chat); err != nil {
+		log.Println(err)
+		return chat, fmt.Errorf("Chat with id(%v) does not exist", chatId)
+	}
+
+	return chat, nil
+}
+
 func AddChat(chat *Chat) (primitive.ObjectID, error) {
 	client, ctx, cancel, err := connectToDb()
 	if err != nil {

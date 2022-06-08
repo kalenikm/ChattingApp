@@ -2,52 +2,42 @@ package main
 
 import (
 	"chattingApp/repository"
-	"fmt"
 	"log"
-	"time"
+	"net/http"
+
+	"github.com/labstack/echo/v4"
 )
 
 func main() {
-	var chat repository.Chat
+	e := echo.New()
 
-	chats, err := repository.GetChats()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	if len(*chats) > 0 {
-		chat = (*chats)[0]
-	} else {
-		chat = repository.Chat{
-			Title: "Another Chat",
-		}
-
-		createId, err := repository.AddChat(&chat)
+	e.GET("/chats", func(c echo.Context) error {
+		chats, err := repository.GetChats()
 		if err != nil {
-			log.Fatal(err)
+			log.Println(err)
+			return err
 		}
 
-		chat.Id = createId
-	}
+		return c.JSON(http.StatusOK, chats)
+	})
 
-	newMessage := &repository.Message{
-		ChatId: chat.Id,
-		Time:   time.Now(),
-		Name:   "Mikhail",
-		Text:   "Hi there!",
-	}
+	e.GET("/chats/:id", func(c echo.Context) error {
+		chatId := c.Param("id")
 
-	objectId, err := repository.AddMessage(chat.Id.Hex(), newMessage)
-	if err != nil {
-		log.Fatal(err)
-	}
-	fmt.Printf("Inserted object id: %v\n", objectId)
+		_, err := repository.GetChatById(chatId)
+		if err != nil {
+			log.Println(err)
+			return c.String(http.StatusBadRequest, err.Error())
+		}
 
-	messages, err := repository.GetMessagesByChatId(chat.Id.Hex())
-	if err != nil {
-		log.Fatal(err)
-	}
-	for _, value := range *messages {
-		fmt.Printf("Id: %v; ChatId: %v; Time: %v, Name: %v, Text: %v;\n", value.Id, value.ChatId, value.Time, value.Name, value.Text)
-	}
+		messages, err := repository.GetMessagesByChatId(chatId)
+		if err != nil {
+			log.Println(err)
+			return err
+		}
+
+		return c.JSON(http.StatusOK, messages)
+	})
+
+	e.Logger.Fatal(e.Start(":1323"))
 }
