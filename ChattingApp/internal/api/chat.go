@@ -4,7 +4,7 @@ import "chattingApp/internal/repository"
 
 type ChatService interface {
 	GetChats() (*[]Chat, error)
-	CreateChat(chat NewChatRequest) (string, error)
+	CreateChat(chat *NewChatRequest) (string, error)
 }
 
 type chatService struct {
@@ -24,17 +24,15 @@ func (s *chatService) GetChats() (*[]Chat, error) {
 	}
 
 	chats := make([]Chat, len(*chatEntities))
-	for _, chat := range *chatEntities {
-		chats = append(chats, Chat{
-			Id:    chat.Id.Hex(),
-			Title: chat.Title,
-		})
+	for i, chat := range *chatEntities {
+		chats[i].Id = chat.Id.Hex()
+		chats[i].Title = chat.Title
 	}
 
 	return &chats, nil
 }
 
-func (s *chatService) CreateChat(chat NewChatRequest) (string, error) {
+func (s *chatService) CreateChat(chat *NewChatRequest) (string, error) {
 	chatEntity := &repository.Chat{
 		Title: chat.Title,
 	}

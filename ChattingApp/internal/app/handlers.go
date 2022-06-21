@@ -1,6 +1,7 @@
 package app
 
 import (
+	"chattingApp/internal/api"
 	"log"
 	"net/http"
 
@@ -29,5 +30,24 @@ func (s *Server) GetChats() echo.HandlerFunc {
 		}
 
 		return c.JSON(http.StatusOK, chats)
+	}
+}
+
+func (s *Server) AddChat() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		chatRequest := &api.NewChatRequest{}
+
+		if err := c.Bind(chatRequest); err != nil {
+			log.Println(err)
+			return err
+		}
+
+		createdId, err := s.chatService.CreateChat(chatRequest)
+		if err != nil {
+			log.Println(err)
+			return err
+		}
+
+		return c.JSON(http.StatusOK, createdId)
 	}
 }

@@ -13,6 +13,7 @@ func (server *Server) Routes() *echo.Echo {
 	v1.GET("/status", server.ApiStatus())
 
 	v1.GET("/chats", server.GetChats())
+	v1.POST("/chats", server.AddChat())
 
 	return e
 }
