@@ -8,8 +8,7 @@ import (
 
 var dbName = "chattingApp"
 var chatsCollectionName = "chats"
-
-//var messagesCollectionName = "messages"
+var messagesCollectionName = "messages"
 
 type Message struct {
 	Id     primitive.ObjectID `bson:"_id,omitempty"`

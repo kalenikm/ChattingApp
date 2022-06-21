@@ -48,6 +48,40 @@ func (s *Server) AddChat() echo.HandlerFunc {
 			return err
 		}
 
-		return c.JSON(http.StatusOK, createdId)
+		return c.JSON(http.StatusCreated, createdId)
+	}
+}
+
+func (s *Server) GetMessages() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		chatId := c.Param("chatId")
+		messages, err := s.messageService.GetMessages(chatId)
+		if err != nil {
+			log.Println(err)
+			return err
+		}
+
+		return c.JSON(http.StatusOK, messages)
+	}
+}
+
+func (s *Server) AddMessage() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		chatId := c.Param("chatId")
+
+		messageRequest := &api.NewMessageRequest{}
+
+		if err := c.Bind(messageRequest); err != nil {
+			log.Println(err)
+			return err
+		}
+
+		createdId, err := s.messageService.AddMessage(chatId, messageRequest)
+		if err != nil {
+			log.Println(err)
+			return err
+		}
+
+		return c.JSON(http.StatusCreated, createdId)
 	}
 }

@@ -10,6 +10,9 @@ import (
 type Storage interface {
 	GetChats() (*[]Chat, error)
 	AddChat(chat *Chat) (primitive.ObjectID, error)
+
+	GetMessages(chatId string) (*[]Message, error)
+	AddMessage(chatId string, message *Message) (primitive.ObjectID, error)
 }
 
 type storage struct {

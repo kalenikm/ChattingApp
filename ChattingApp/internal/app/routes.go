@@ -15,5 +15,8 @@ func (server *Server) Routes() *echo.Echo {
 	v1.GET("/chats", server.GetChats())
 	v1.POST("/chats", server.AddChat())
 
+	v1.GET("/chats/:chatId/messages", server.GetMessages())
+	v1.POST("/chats/:chatId/messages", server.AddMessage())
+
 	return e
 }

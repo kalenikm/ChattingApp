@@ -12,9 +12,8 @@ type Chat struct {
 }
 
 type NewMessageRequest struct {
-	Time time.Time `json:"time"`
-	Name string    `json:"name"`
-	Text string    `json:"text"`
+	Name string `json:"name"`
+	Text string `json:"text"`
 }
 
 type Message struct {
