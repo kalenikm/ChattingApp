@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/gorilla/websocket"
 	"github.com/labstack/echo/v4"
 )
 
@@ -83,5 +84,24 @@ func (s *Server) AddMessage() echo.HandlerFunc {
 		}
 
 		return c.JSON(http.StatusCreated, createdId)
+	}
+}
+
+var upgrader = websocket.Upgrader{}
+
+func (s *Server) WebSocket() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		conn, err := upgrader.Upgrade(c.Response(), c.Request(), c.Response().Header())
+		if err != nil {
+			log.Println(err)
+		}
+
+		name := c.QueryParam("name")
+		chatId := c.QueryParam("chatId")
+		currentConn := api.WebSocketConnection{Conn: conn, ChatId: chatId, Name: name}
+
+		go s.webSocketService.HandleConnection(&currentConn)
+
+		return nil
 	}
 }

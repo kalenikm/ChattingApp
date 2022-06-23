@@ -36,8 +36,9 @@ func run() error {
 
 	chatService := api.NewChatService(storage)
 	messageService := api.NewMessageService(storage)
+	webSocketService := api.NewWebSocketService(messageService)
 
-	server := app.NewServer(e, chatService, messageService)
+	server := app.NewServer(e, chatService, messageService, webSocketService)
 
 	err = server.Run()
 

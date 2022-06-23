@@ -8,16 +8,18 @@ import (
 )
 
 type Server struct {
-	echo           *echo.Echo
-	chatService    api.ChatService
-	messageService api.MessageService
+	echo             *echo.Echo
+	chatService      api.ChatService
+	messageService   api.MessageService
+	webSocketService api.WebSocketService
 }
 
-func NewServer(echo *echo.Echo, chatService api.ChatService, messageService api.MessageService) *Server {
+func NewServer(echo *echo.Echo, chatService api.ChatService, messageService api.MessageService, webSocketService api.WebSocketService) *Server {
 	return &Server{
-		echo:           echo,
-		chatService:    chatService,
-		messageService: messageService,
+		echo:             echo,
+		chatService:      chatService,
+		messageService:   messageService,
+		webSocketService: webSocketService,
 	}
 }
 
